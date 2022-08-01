@@ -1,1 +1,2 @@
 # VIEmail
+This project makes the process of sending and receiving emails for the physically challenged and the visually impaired easier as it eliminates the use of keyboard. So only with the help of speech, the person can successfully send text based emails to anyone he/she wants to. The person can also retrieve text based emails from anyone and listen to the mail using website’s text to speech function. We have made it so that every navigation within the website is voice based so user won’t need to read anything.
