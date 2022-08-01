@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+        .register('/service-worker.js')
+        .then(function(registration) {
+            console.log('Service Worker Registered!');
+            return registration;
+        })
+        .catch(function(err) {
+            console.error('Unable to register service worker.', err);
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        TextToSpeech();
+    });
+
+    function setUtterance(message, voice) {
+        let utterance = new SpeechSynthesisUtterance(message);
+        utterance.voice = voice;
+		utterance.pitch = 2;
+		utterance.rate = 1.2;
+		utterance.volume = 0.9;
+        return utterance;
+    }
+
+    function SpeechToText(synthesis, voice, time) {
+        console.log("time: "+time);
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	console.log("Inside Else");
+        	recognizer.onresult = function(event) {
+                console.log("Start of onresult");
+                let resultString = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultString = event.results[i][0].transcript;
+                    }
+                }
+                //console.log("X:" +resultString);
+                if(resultString=="register") {
+                    window.location.replace("{{ url_for('registerPage') }}");
+                } else if(resultString=="login") {
+                    window.location.replace("{{ url_for('loginPage') }}");
+                } else {
+                    reUtterance(synthesis, voice, 'Make a choice between Register or Login to proceed');
+                }
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                console.log('Error occurred in recognition: ' + event.error);
+            }
+
+
+            recognizer.start();
+            //console.log("Recognizer Start");
+
+            function stopRecognition() {
+                recognizer.stop();
+                //console.log("Recognizer Stop");
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function TextToSpeech() {
+        if ('speechSynthesis' in window) {
+            let synthesis = window.speechSynthesis;
+            synthesis.onvoiceschanged = function() {
+			let voice = synthesis.getVoices().filter(function(voice) {
+                return voice.name == 'Microsoft David Desktop - English (United States)';
+            })[0];
+
+            console.log("voice: "+voice);
+
+            let myChoice = '{{ choice }}';
+            if(myChoice=='10') {
+                let utterance;
+                utterance = setUtterance('Logout Successful!', voice);
+                synthesis.speak(utterance);
+            }
+
+            let utterance;
+            utterance = setUtterance('Hello! Welcome To V I Email', voice);
+            synthesis.speak(utterance);
+
+            utterance = setUtterance('Do You Want To Register or Login ?', voice);
+            synthesis.speak(utterance);
+            let redirectResult = 0;
+            utterance.onend = function(event) {
+                //console.log("Inside On End");
+                redirectResult = SpeechToText(synthesis, voice, 4000);
+                console.log("Redirect Result (first time): " + redirectResult);
+                switch(redirectResult) {
+                    case 0:
+                        reUtterance(synthesis, voice, 'Make a choice between Register or Login to proceed');
+                        break;
+                    case 1:
+                        utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+                        synthesis.speak(utterance);
+                        break;
+                    case 2:
+                        window.location.replace("{{ url_for('registerPage') }}");
+                        break;
+                    case 3:
+                        window.location.replace("{{ url_for('loginPage') }}");
+                        break;
+                    case 4:
+                        reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                        break;
+                }
+                //console.log("Loaded");
+            }
+            }
+        } else {
+		    console.log('Text-to-speech not supported on this browser (or on your device).');
+		}
+    }
+
+    function reUtterance(synthesis, voice, message) {
+        let utterance = setUtterance(message, voice);
+        synthesis.speak(utterance);
+        utterance.onend = function(event) {
+            console.log("Inside On Result (reutterance)");
+            let redirectResult = SpeechToText(synthesis, voice, 4000);
+        }
+    }
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid d-flex flex-column justify-content-center align-items-center indexPageContainer">
+        <h1 class="welcome-header"> Welcome To </h1>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <svg class="indexPageLogo" version="1.1" viewBox="0 0 305.8 274.24" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(372.68 -100.68)">
+                <path d="m-73.025 206.51a57.87 63.5 0 0 1-56.776 51.326 57.87 63.5 0 0 1-56.817-51.318" fill="none" stroke="#3b3355" stroke-linecap="square" stroke-width="10.583" style="paint-order:fill markers stroke"/>
+                <g fill-rule="evenodd">
+                    <rect x="-166.86" y="100.68" width="74.083" height="141.29" ry="38.039" fill="#3b3355" style="paint-order:fill markers stroke"/>
+                    <rect transform="scale(-1,1)" x="128.44" y="263.66" width="2.7663" height="38.1" fill="#333" fill-opacity=".94118" stroke="#3b3355" stroke-linecap="square" stroke-width="10.583" style="paint-order:fill markers stroke"/>
+                    <rect transform="scale(1,-1)" x="-166.86" y="-301.98" width="74.083" height=".22033" ry=".11017" fill="#333" fill-opacity=".94118" stroke="#3b3355" stroke-linecap="square" stroke-width="10.583" style="paint-order:fill markers stroke"/>
+                </g>
+                <g fill="#3b3355">
+                    <path d="m-316.44 321.87v52.917h42.333v-10.583h-31.75v-10.583h31.75v-10.583h-31.75v-10.583h31.75v-10.583z"/>
+                    <path d="m-267.76 321.87v52.917h10.319l-1e-5 -31.75 15.478 10.583 15.478-10.583v31.75h10.319v-52.917l-25.797 15.875z"/>
+                    <g transform="matrix(2.081 0 0 1.8618 1120.4 -1923.4)" aria-label="A">
+                        <path transform="matrix(.14411 0 0 .14212 -535.57 1035.1)" d="m-646.58 1201.6-72.643 199.83h29.816l14.621-43.156h-2e-3l9.3652-27.719h0.0293l30.604-90.332 30.611 90.356h0.0273l9.1094 27.012h0.0156l14.854 43.84h29.816l-72.643-199.83z" fill="#3b3355" stroke-width=".13472"/>
+                    </g>
+                    <path d="m-208.53 374.5 52.181-48.936-43.239 48.936z"/>
+                </g>
+                <path d="m-209.87 374.54 52.181-48.956-46.183 48.956z" fill="#fff"/>
+                <g fill="#3b3355">
+                    <path d="m-196.06 361.56 8.61-8.2689-7.5517 1.3897z"/>
+                    <path d="m-151.34 321.87v52.917h10.583v-52.917z" stroke="#000" stroke-width=".26458px"/>
+                    <path d="m-131.23 321.87v52.917h37.042v-10.583h-26.458v-42.333z" stroke="#000" stroke-width=".26458px"/>
+                    <path d="m-372.68 102.64h41.577l74.839 147.4-10.394 23.844z"/>
+                    <path d="m-264.58 221.86 10.394 23.844 81.076-143.07z"/>
+                    <path d="m-260.43 282.55 87.312-179.92-70.682 208.1z"/>
+                </g>
+            </g>
+        </svg>
+        <h3>  </h3>
+        <h4 class="choice-header mt-4"> Would you like to register or login? </h4>
+        <div class="row d-flex justify-content-center align-items-center text-center mt-3">
+            <div class="col-md-6 col-12 my-1">
+                <form method="POST" action="{{url_for('registerPage')}}">
+                    <button class="btn btn-register m-0 px-3" type="submit"> Register </button>
+                </form>
+            </div>
+            <div class="col-md-6 col-12">
+                <form method="POST" action="{{url_for('loginPage')}}">
+                    <button class="btn btn-login m-0 px-3" type="submit"> Login </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> {{ title }} </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <!-- iOS -->
+    <meta name="theme-color" content="white">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='static/icon-96.png') }}">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='static/icon-96.png') }}">
+    <meta name="apple-mobile-web-app-title" content="Flask PWA">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Bootstrap Core Minified CSS CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery CDN -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+    <!-- Yatra One -->
+    <link href="https://fonts.googleapis.com/css?family=Yatra+One&display=swap" rel="stylesheet">
+    <!-- Cairo -->
+    <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
+    <!-- Arvo -->
+    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
+    <!-- Exo 2 -->
+    <link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
+    <!-- Import Custom CSS -->
+    <link rel="stylesheet" href= "{{ url_for('static',filename='styles.css') }}">
+    <!-- Adding Favicon -->
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ url_for('static', filename='VIEmailFavicon.svg') }}">
+
+    {% block script %} {% endblock %}
+</head>
+<body>
+    {% block content %} {% endblock %}
+</body>
+</html>

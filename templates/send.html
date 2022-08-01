@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        TextToSpeech();
+    });
+
+    function setUtterance(message, voice) {
+        let utterance = new SpeechSynthesisUtterance(message);
+        utterance.voice = voice;
+		utterance.pitch = 2;
+		utterance.rate = 1.2;
+		utterance.volume = 0.9;
+        return utterance;
+		synthesis.speak(utterance);
+    }
+
+    function EmailMessage(synthesis, voice, time, email, subject) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultString = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultString = event.results[i][0].transcript;
+                    }
+                }
+                let userMessage = ''+resultString;
+                $(".message").val(userMessage);
+                setTimeout(mailing, 5000)
+
+                function mailing() {
+                    $.post('/sendEmail', {recipient: email, subject: subject, message: userMessage}).done(function(data) {
+                        if(data=='1') {
+                            utterance = setUtterance('Email Sent Successfully', voice);
+                            synthesis.speak(utterance);
+                            window.location.replace("{{ url_for('main') }}");
+                        } else {
+                            reUtterance(synthesis, voice,'Email Not Sent. Please try again!');
+                            window.close();
+                        }
+                    });
+                    $(".to").val("");
+                    $(".subject").val("");
+                    $(".message").val("");
+                }
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+            }
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function EmailSubject(synthesis, voice, time, email) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultString = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultString = event.results[i][0].transcript;
+                    }
+                }
+                let userSubject = ''+resultString;
+                $(".subject").val(userSubject);
+                utterance = setUtterance('Enter The Email Message', voice);
+                synthesis.speak(utterance);
+                utterance.onend = function(event) {
+                    EmailMessage(synthesis, voice, 15000, email, userSubject);
+                }
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+            }
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function ReceiverEmail(synthesis, voice, time) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultString = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultString = event.results[i][0].transcript;
+                    }
+                }
+                let userEmail = '';
+
+                let str = resultString.split(" ").join("")
+                str = str.toLowerCase();
+                if(str.includes('dot')) {
+                    str = str.replace("dot", ".")
+                }
+                if(str.includes('taught')) {
+                    str = str.replace("taught", ".")
+                }
+                if(str.includes('attherate')) {
+                    str = str.replace("attherate", "@")
+                }
+                if(str.includes('atrate')) {
+                    str = str.replace("atrate", "@")
+                }
+                userEmail =  str;
+                $(".to").val(userEmail);
+                utterance = setUtterance('Enter The Subject For The Email', voice);
+                synthesis.speak(utterance);
+                utterance.onend = function(event) {
+                    EmailSubject(synthesis, voice, 9000, userEmail);
+                }
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                console.log('Error occurred in recognition: ' + event.error);
+            }
+
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function TextToSpeech() {
+        if ('speechSynthesis' in window) {
+            let synthesis = window.speechSynthesis;
+            synthesis.onvoiceschanged = function() {
+			let voice = synthesis.getVoices().filter(function(voice) {
+                return voice.name == 'Microsoft David Desktop - English (United States)';
+            })[0];
+
+            let utterance;
+            utterance = setUtterance('Enter Reciepent\'s Email', voice);
+            synthesis.speak(utterance);
+            let redirectResult = 0;
+            utterance.onend = function(event) {
+                ReceiverEmail(synthesis, voice, 9000);
+            }
+            }
+        } else {
+		    console.log('Text-to-speech not supported on this browser (or on your device).');
+		}
+    }
+
+    function reUtterance(synthesis, voice, message) {
+        let utterance = setUtterance(message, voice);
+        synthesis.speak(utterance);
+        utterance.onend = function(event) {
+            let redirectResult = ReceiverEmail(synthesis, voice, 4000);
+        }
+    }
+
+    $(document).ready(function () {
+        $(".btn-send").on('click', function() {
+            let to = $(".to").val();
+            let subject = $(".subject").val();
+            let message = $(".message").val();
+            setTimeout(mailing, 5000)
+
+            function mailing() {
+                $.post('/sendEmail', {recipient: to, subject: subject, message: message}).done(function(data) {
+                    if(data=='1') {
+                        alert("Email Sent Successfully");
+                        window.location.replace("{{ url_for('main') }}");
+                    } else {
+                        alert("Email Not Sent");
+                        reUtterance(synthesis, voice,'Email Not Sent. Please try again!');
+                    }
+                });
+                $(".to").val("");
+                $(".subject").val("");
+                $(".message").val("");
+            }
+        });
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh">
+    <form class="card w-75" method="POST">
+        <div class="card-header bg-dark text-white"><strong>Send Mail</strong></div>
+        <div class="card-body border border-dark">
+            <div class=" d-flex align-items-center px-2">
+                <span class="pr-4"> To </span>
+                <textarea rows="1" name="recipient" autocomplete="false" autocapitalize="off" autocorrect="off"
+                          tabindex="1" class="to" style="width: 100%; border: none; outline: none; resize: none; font-size: 15px;"></textarea>
+            </div>
+            <hr style="width: 97%" />
+
+            <div class=" d-flex align-items-center px-2">
+                <span class="pr-4"> Subject </span>
+                <textarea rows="1" name="subject" autocomplete="false" autocapitalize="off" autocorrect="off"
+                          tabindex="1" class="subject" style="width: 100%; border: none; outline: none; resize: none; font-size: 15px;"></textarea>
+            </div>
+            <hr style="width: 97%" />
+            <div class=" d-flex align-items-center px-2">
+                <textarea rows="7" name="message" autocomplete="false" autocapitalize="off" placeholder="Enter Your Email Message" autocorrect="off"
+                          tabindex="1" class="message" style="width: 100%; border: none; outline: none; resize: none; font-size: 15px;"></textarea>
+            </div>
+        </div>
+        <div class="card-footer border border-dark">
+            <div class="float-right">
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <button class="btn btn-cancel mx-1 my-md-0 my-2 px-3" style="width: 150px;" type="button"> Cancel </button>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <button class="btn btn-send mx-1 px-3" style="width: 150px;" type="button"> Send </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+{% endblock %}

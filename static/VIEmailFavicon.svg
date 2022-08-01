@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="4.1579mm" height="4.2333mm" version="1.1" viewBox="0 0 4.1579 4.2333" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-14.167 -147.03)">
+  <path d="m18.249 148.66a0.78837 0.9807 0 0 1-0.77345 0.79269 0.78837 0.9807 0 0 1-0.77401-0.79256" fill="none" stroke="#3b3355" stroke-linecap="square" stroke-width=".13229" style="paint-order:fill markers stroke"/>
+  <g fill-rule="evenodd">
+   <rect x="16.971" y="147.03" width="1.0092" height="2.182" ry=".58747" fill="#3b3355" style="paint-order:fill markers stroke"/>
+   <rect transform="scale(-1,1)" x="-17.494" y="149.55" width=".037686" height=".58842" fill="#333" fill-opacity=".94118" stroke="#3b3355" stroke-linecap="square" stroke-width=".13229" style="paint-order:fill markers stroke"/>
+   <rect transform="scale(1,-1)" x="16.971" y="-150.14" width="1.0092" height=".0034028" ry=".0017014" fill="#333" fill-opacity=".94118" stroke="#3b3355" stroke-linecap="square" stroke-width=".13229" style="paint-order:fill markers stroke"/>
+  </g>
+  <g fill="#3b3355">
+   <path d="m14.933 150.44v0.81725h0.57671v-0.16345h-0.43253v-0.16345h0.43253v-0.16345h-0.43253v-0.16345h0.43253v-0.16345z"/>
+   <path d="m15.597 150.44v0.81725h0.14057v-0.49035l0.21086 0.16345 0.21086-0.16345v0.49035h0.14057v-0.81725l-0.35143 0.24518z"/>
+   <g transform="matrix(.02835 0 0 .028753 34.507 115.77)" aria-label="A">
+    <path transform="matrix(.14411 0 0 .14212 -535.57 1035.1)" d="m-646.58 1201.6-72.643 199.83h29.816l14.621-43.156h-2e-3l9.3652-27.719h0.0293l30.604-90.332 30.611 90.356h0.0273l9.1094 27.012h0.0156l14.854 43.84h29.816l-72.643-199.83z" fill="#3b3355" stroke-width="9.2882"/>
+   </g>
+   <path d="m16.403 151.26 0.71086-0.75578-0.58904 0.75578z"/>
+  </g>
+  <path d="m16.385 151.26 0.71086-0.75608-0.62916 0.75608z" fill="#fff"/>
+  <g fill="#3b3355">
+   <path d="m16.573 151.06 0.11729-0.12771-0.10288 0.0215z"/>
+   <path d="m17.182 150.44v0.81725h0.14418v-0.81725z"/>
+   <path d="m17.456 150.44v0.81725h0.50462v-0.16345h-0.36044v-0.6538z"/>
+   <path d="m14.167 147.06h0.56641l1.0195 2.2765-0.1416 0.36825z"/>
+   <path d="m15.64 148.9 0.1416 0.36825 1.1045-2.2095z"/>
+   <path d="m15.696 149.84 1.1895-2.7786-0.96289 3.2138z"/>
+  </g>
+ </g>
+</svg>

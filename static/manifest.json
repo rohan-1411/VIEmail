@@ -1,0 +1,32 @@
+{
+  "name": "VIEmail",
+  "short_name": "VIE",
+  "theme_color": "#CBD394",
+  "background_color": "#F1F7C6",
+  "icons": [
+    {
+        "src": "/static/VIEmail-64.png",
+        "type": "image/png",
+        "sizes": "64x64"
+      },
+      {
+        "src": "/static/VIEmail-96.png",
+        "type": "image/png",
+        "sizes": "96x96"
+      },
+      {
+        "src": "/static/VIEmail-192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/static/VIEmail-512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+  ],
+  "lang": "en-US",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}

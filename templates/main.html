@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        let myChoice = '{{ choice }}';
+        TextToSpeech(myChoice);
+    });
+
+     function setUtterance(message, voice) {
+        let utterance = new SpeechSynthesisUtterance(message);
+        utterance.voice = voice;
+		utterance.pitch = 2;
+		utterance.rate = 1.2;
+		utterance.volume = 0.9;
+        return utterance;
+		synthesis.speak(utterance);
+    }
+
+    function SpeechToText(synthesis, voice, time) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultString = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultString = event.results[i][0].transcript;
+                    }
+                }
+
+                resultString = resultString.split(" ").join("");
+                if(resultString=="send") {
+                    window.location.replace("{{ url_for('sendPage') }}");
+                } else if(resultString=="view") {
+                    window.location.replace("{{ url_for('viewPage') }}");
+                } else if(resultString=="logout") {
+                    $.post('/logout').done(function(data){
+                        if(data=='10') {
+                            window.location.replace("{{ url_for('index', choice='10') }}");
+                        } else {
+                            reUtterance(synthesis, voice, 'Logout Failed! Make a choice between Send , View or Logout to proceed');
+                        }
+                    });
+                } else {
+                    reUtterance(synthesis, voice, 'Make a choice between Send,  View or Logout to proceed');
+                }
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                console.log('Error occurred in recognition: ' + event.error);
+            }
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function TextToSpeech(myChoice) {
+        if ('speechSynthesis' in window) {
+            let synthesis = window.speechSynthesis;
+            synthesis.onvoiceschanged = function() {
+			let voice = synthesis.getVoices().filter(function(voice) {
+                return voice.name == 'Microsoft David Desktop - English (United States)';
+            })[0];
+            if(myChoice=='1') {
+                utterance = setUtterance('Login Successful', voice);
+                synthesis.speak(utterance);
+            } else if(myChoice=='3') {
+                utterance = setUtterance('Registration Completed Successfully', voice);
+                synthesis.speak(utterance);
+            }
+            utterance = setUtterance('Would you like to Send Email, View Email or Logout?', voice);
+            synthesis.speak(utterance);
+            let redirectResult = 0;
+            utterance.onend = function(event) {
+                redirectResult = SpeechToText(synthesis, voice, 4000);
+            }
+            }
+        } else {
+		    console.log('Text-to-speech not supported on this browser (or on your device).');
+		}
+
+    }
+
+    function reUtterance(synthesis, voice, message) {
+        let utterance = setUtterance(message, voice);
+        synthesis.speak(utterance);
+        utterance.onend = function(event) {
+            let redirectResult = SpeechToText(synthesis, voice, 4000);
+        }
+    }
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row" style="height: 100vh; weight: 100vw;">
+            <h2 class="main-heading"> Do You Want To Send Or Read Mails?  </h2>
+            <div class="col-md-6 col-12 d-flex justify-content-center align-items-center" style="background-color: #3B3355;">
+                <form method="POST" action="{{url_for('sendPage')}}">
+                    <button class="btn btn-lg" style="background-color: #FEFCFD;"> Send Mail </button>
+                </form>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-center align-items-center" style="background-color: #5D5D81;">
+                <form method="POST" action="{{url_for('viewPage')}}">
+                    <button class="btn btn-lg" style="background-color: #FEFCFD;"> View Mail </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,117 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background-color: #EFF1F3;
+}
+body::-webkit-scrollbar {
+    width: 6px;
+}
+body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+.welcome-header {
+    font-family: 'Cairo';
+    font-size: 50px;
+}
+.indexPageContainer {
+    min-height: 100vh;
+    font-family: 'Exo 2';
+}
+.indexPageLogo {
+    width: 60vw;
+    height: 30vh;
+    margin: 15px 0 50px;
+}
+.choice-header {
+    text-align: center;
+}
+.btn-register, .btn-login, .btn-cancel, .btn-send {
+    font-size: 18px;
+    color: #fff;
+    background-color: #3B3355;
+    border-color: #3B3355;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    padding: 5px 15px;
+    border-radius: 5px;
+    width: 100%;
+}
+.btn-register:hover, .btn-login:hover, .btn-cancel:hover, .btn-send:hover,
+.btn-register:focus, .btn-login:focus, .btn-cancel:focus, .btn-send:focus {
+    background: #000505;
+    color: #ffffff;
+    border-color: #000505;
+}
+.bodyForm{
+    margin: 0;
+	padding: 0;
+	background-color: #BFCDE0;
+}
+.wrap{
+	width:450px;
+	overflow: auto;
+	margin: auto;
+	margin-top: 130px;
+	padding: 20px;
+	background-color: #fff;
+	border: 1px solid silver;
+	border-color:black;
+	border-radius: 5px;
+}
+.wrap2 {
+    width: 50%;
+}
+.wrap .input_box{
+    width: 96%;
+	height: 35px;
+	margin-bottom: 13px;
+	margin-left:13px;
+	border-radius:  3px;
+	border:1px solid silver;
+	padding: 5px;
+}
+.wrap .personal{
+	padding: 5px;
+	width: 90px;
+	height: 40px;
+	background-color: blue;
+	margin-left:185px;
+	color: #fff;
+	border-radius: 3px;
+	border:0;
+	font-size: 18px;
+}
+.wrap h2{
+	text-align: center;
+}
+.wrap .Signlink{
+	text-align: center;
+	margin-top:14px;
+	font-size: 18px;
+}
+.wrap .Login{
+	margin-top:5px;
+	margin-bottom:14px;
+	color: red;
+}
+::placeholder{
+	font-size: 20px;
+	margin-left:13px;
+}
+.main-heading {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%);
+    color: #FFF;
+    font-size: 30px;
+    text-align: center;
+    z-index: 50;
+}

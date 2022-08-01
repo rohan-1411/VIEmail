@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block script %}
+    <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        document.body.classList.add("bodyForm");
+        let myChoice = '{{ choice }}';
+        if(myChoice=='1') {
+            TextToSpeech(1);
+        } else {
+            TextToSpeech(2);
+        }
+    });
+
+     function setUtterance(message, voice) {
+        let utterance = new SpeechSynthesisUtterance(message);
+        utterance.voice = voice;
+		utterance.pitch = 2;
+		utterance.rate = 1.2;
+		utterance.volume = 0.9;
+        return utterance;
+		synthesis.speak(utterance);
+    }
+
+    function getUserEmail(synthesis, voice, time) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultEmail = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultEmail = event.results[i][0].transcript;
+                    }
+                }
+
+                // Formatting E-mail
+                let str = resultEmail.split(" ").join("")
+                str = str.toLowerCase();
+                userEmail = str;
+                $('#email').val(userEmail);
+
+                utterance = setUtterance('Enter Your Password', voice);
+                synthesis.speak(utterance);
+                utterance.onend = function(event) {
+                    redirectResult = getUserPassword(synthesis, voice, 9000, userEmail);
+                }
+            }
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                console.log('Error occurred in recognition: ' + event.error);
+            }
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function getUserPassword(synthesis, voice, time, userEmail) {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      	if (window.SpeechRecognition === null) {
+            utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+            synthesis.speak(utterance);
+        } else {
+            let recognizer = new window.SpeechRecognition();
+        	recognizer.continuous = false;
+			recognizer.lang = 'en-IN';
+        	recognizer.onresult = function(event) {
+                let resultPass = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        resultPass = event.results[i][0].transcript;
+                    }
+                }
+                str = resultPass.split(" ").join("")
+                let userPass = str;
+                $('#password').val(userPass);
+                setTimeout(function(){ document.querySelector(".submitBtn").click(); }, 5000);
+            }
+
+            recognizer.onerror = function(event) {
+                reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+            }
+            recognizer.start();
+
+            function stopRecognition() {
+                recognizer.stop();
+            }
+            setTimeout(stopRecognition, time);
+        }
+    }
+
+    function TextToSpeech(choice) {
+        if ('speechSynthesis' in window) {
+            let synthesis = window.speechSynthesis;
+            synthesis.onvoiceschanged = function() {
+			let voice = synthesis.getVoices().filter(function(voice) {
+                return voice.name == 'Microsoft David Desktop - English (United States)';
+            })[0];
+
+            let utterance;
+            if(choice=='1') {
+                utterance = setUtterance('You have entered to Login Page!', voice);
+            } else {
+                utterance = setUtterance('Login Failed! The entered email or password did not match our entry. Try re-entering again.', voice);
+            }
+            synthesis.speak(utterance);
+
+            utterance = setUtterance('Enter Your E-mail Id', voice);
+            synthesis.speak(utterance);
+            utterance.onend = function(event) {
+                redirectResult = getUserEmail(synthesis, voice, 7000);
+            }
+            }
+        } else {
+		    console.log('Text-to-speech not supported on this browser (or on your device).');
+		}
+    }
+
+    function reUtterance(synthesis, voice, message) {
+        let utterance = setUtterance(message, voice);
+        synthesis.speak(utterance);
+        utterance.onend = function(event) {
+            let redirectResult = SpeechToText(synthesis, voice, 4000);
+            switch(redirectResult) {
+                case 0:
+                    reUtterance(synthesis, voice, 'Make a choice between Register or Login to proceed')
+                case 1:
+                    utterance = setUtterance('Sorry, but Speech Synthesis in not supported by your browser.', voice);
+                    synthesis.speak(utterance);
+                    break;
+                case 2:
+                    window.location.replace("{{ url_for('registerPage') }}");
+                    break;
+                case 3:
+                    window.location.replace("{{ url_for('loginPage') }}");
+                    break;
+                case 4:
+                    reUtterance(synthesis, voice,'Sorry for the inconvinence, some error occured. Please try again!');
+                    break;
+            }
+        }
+    }
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="wrap">
+		<form name="Form1" method="POST" action="/checkLogin">
+			<h2>Login</h2>
+			&nbsp;&nbsp;&nbsp;<input class="input_box" type="email" name="user_email" id="email" placeholder="Email" required="required">
+			&nbsp;&nbsp;&nbsp;<input class="input_box" type="password" name="user_password" id="password" placeholder="Password" required="required">
+            <button type="submit" class="submitBtn personal"> Submit </button>
+			<div class="Signlink">Don't have an account?<a href="register.html"><b>Register</b></a></div>
+        </form>
+    </div>
+{% endblock %}
